@@ -1,0 +1,308 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package main;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
+import org.json.*;
+
+/**
+ *
+ * @author Asx
+ */
+public class FileManager {
+    
+    private GameController game;
+    private HUD hud;
+
+    private LinkedList<LinkedList<Integer>> currentBehaviours;
+    private LinkedList<LinkedList<Integer>> lastBehaviours;
+    //private LinkedList<Integer> currentValues;
+    //private LinkedList<Integer> lastValues;
+    private LinkedList<Integer> currentIds;
+    private LinkedList<Integer> lastIds;
+    private LinkedList<Integer[]> currentParents;
+    private LinkedList<Integer[]> lastParents;
+    
+    private FileWriter sfile;
+    
+    public FileManager(GameController _gc, HUD _h)
+    {
+        game = _gc;
+        hud = _h;
+        
+        currentBehaviours = new LinkedList<LinkedList<Integer>>();
+        lastBehaviours = new LinkedList<LinkedList<Integer>>();
+        //currentValues = new LinkedList<Integer>();  //niepotrzebne w tym podejściu
+        //lastValues = new LinkedList<Integer>();     //niepotrzebne w tym podejściu
+        currentIds = new LinkedList<Integer>();
+        lastIds = new LinkedList<Integer>();
+        currentParents = new LinkedList<Integer[]>();
+        lastParents = new LinkedList<Integer[]>();
+        
+        try {
+            sfile = new FileWriter(GlobalVars.enFile);
+        } catch (IOException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void AddData(BasicEnemy enemy)
+    {
+        currentBehaviours.add(enemy.copyBehaviour());
+        //currentValues.add(enemy.getValue());    //niepotrzebne w tym podejściu
+        currentIds.add(enemy.getId());
+        int[] tmp1 = enemy.getParents();
+        Integer[] tmp2 = {tmp1[0],tmp1[1]};
+        currentParents.add(tmp2);
+            
+        int n = GlobalVars.enemyCount;
+        if(currentBehaviours.size() >= n)
+        {
+            lastBehaviours.clear();
+            //lastValues.clear(); //niepotrzebne w tym podejściu
+            lastIds.clear();
+            lastParents.clear();
+            
+            for(int i=0; i<n; i++)
+            {
+                lastBehaviours.add(currentBehaviours.pop());
+                //lastValues.add(currentValues.pop());    //niepotrzebne w tym podejściu
+                lastIds.add(currentIds.pop());
+                lastParents.add(currentParents.pop());
+            }
+        }
+    }
+    
+    public void reset()
+    {
+        lastBehaviours.clear();
+        //lastValues.clear(); //niepotrzebne w tym podejściu
+        lastIds.clear();
+        lastParents.clear();
+        currentBehaviours.clear();
+        //currentValues.clear(); //niepotrzebne w tym podejściu
+        currentIds.clear();
+        currentParents.clear();
+    }
+    
+    private void saveEnemies()
+    {
+        //System.out.println("Saving the game state");
+        JSONArray jarray = new JSONArray();
+        int n = lastBehaviours.size();
+        for(int i=0; i<n; i++)
+        {
+            JSONObject obj = new JSONObject();
+            try 
+            {
+                obj.put("ID", lastIds.get(i));
+                //obj.put("Value", lastValues.get(i));    //niepotrzebne w tym podejściu
+                
+                JSONArray jparents = new JSONArray();
+                int[] tmp = new int[2];
+                tmp[0] = lastParents.get(i)[0];
+                tmp[1] = lastParents.get(i)[1];
+                jparents.put(tmp[0]);
+                jparents.put(tmp[1]);
+                obj.put("Parents", jparents);
+                
+                JSONArray jbehaviours = new JSONArray();
+                int m = lastBehaviours.get(i).size();
+                for(int j=0; j<m; j++)
+                    jbehaviours.put(lastBehaviours.get(i).get(j));
+                obj.put("Behaviour", jbehaviours);
+                
+                //System.out.println("JSON object generated");
+                jarray.put(obj);
+            } 
+            catch (Exception ex) 
+            {
+                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        JSONObject jenemies = new JSONObject();
+        try {
+            jenemies.put("Enemies", jarray);
+        } catch (Exception ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try(FileWriter sfile = new FileWriter(GlobalVars.enFile, true))
+            {
+                sfile.write(jenemies.toString());
+                //System.out.println("Written to file");
+            } 
+            catch (IOException ex) 
+            {
+                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
+    
+    private void saveOptions()
+    {
+        JSONArray jarray = new JSONArray();
+        
+        int n = OptionsManager.OptionsIndex.values().length;
+        int[] tmp = {
+            GlobalVars.enemyCount, 
+            GlobalVars.behaviourSize, 
+            GlobalVars.probMix, 
+            GlobalVars.probMutation, 
+            GlobalVars.wavesTillCross
+        };
+        jarray.put(tmp);
+        
+        JSONObject joptions = new JSONObject();
+        try {
+            joptions.put("Options", jarray);
+        } catch (Exception ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try(FileWriter file = new FileWriter(GlobalVars.optFile))
+        {
+            file.write(joptions.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void savePlayer()
+    {
+        JSONObject jplayer = new JSONObject();
+        
+        try {
+            jplayer.put("HP", hud.getHP());
+            //jplayer.put("Score", hud.getScore());
+        } catch (Exception ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try(FileWriter file = new FileWriter(GlobalVars.plFile))
+        {
+            file.write(jplayer.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void Save()
+    {
+        saveEnemies();
+        saveOptions();
+        savePlayer();
+    }
+    
+    private void loadEnemies()
+    {
+        //JSONParser parser = new JSONParser();
+        try 
+        {
+            //FileReader file = new FileReader(GlobalVars.enFile);
+            File file = new File(GlobalVars.enFile);
+            String content = FileUtils.readFileToString(file, "utf-8");
+            if(!content.isEmpty())
+            {
+                JSONObject obj = new JSONObject(content);
+
+                JSONArray jarray = obj.getJSONArray("Enemies");
+                LinkedList<LinkedList<Integer>> loadBehaviours = new LinkedList<LinkedList<Integer>>();
+                LinkedList<Integer> loadIds = new LinkedList<Integer>();
+                LinkedList<Integer[]> loadParents = new LinkedList<Integer[]>();
+                int n = jarray.length();
+
+                for(int i=0; i<n; i++)
+                {
+                    JSONObject jenemy = jarray.getJSONObject(i);
+
+                    loadIds.add(jenemy.getInt("ID"));
+
+                    Integer[] tmpInt = new Integer[2];
+                    JSONArray jparents = jenemy.getJSONArray("Parents");
+                    tmpInt[0] = jparents.getInt(0);
+                    tmpInt[1] = jparents.getInt(1);
+                    loadParents.add(tmpInt);
+
+                    JSONArray jbehaviour = jenemy.getJSONArray("Behaviour");
+                    loadBehaviours.add(new LinkedList<Integer>());
+                    int m = jbehaviour.length();
+                    for(int j=0; j<m; j++)
+                    {
+                        loadBehaviours.get(i).add(jbehaviour.getInt(j));
+                    }
+                }
+                game.loadEnemies(loadBehaviours, loadIds, loadParents);
+            }
+        } 
+        catch (Exception ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadOptions()
+    {
+        //JSONParser parser = new JSONParser();
+        try {
+            /*
+            FileReader file = new FileReader(GlobalVars.optFile);
+            JSONObject obj = (JSONObject) parser.parse(file);
+            */
+            File file = new File(GlobalVars.optFile);
+            String content = FileUtils.readFileToString(file, "utf-8");
+            if(!content.isEmpty())
+            {
+                JSONObject obj = new JSONObject(content);
+
+                JSONArray jarray = obj.getJSONArray("Options");
+                JSONArray joptions = jarray.getJSONArray(0);
+                GlobalVars.enemyCount = joptions.getInt(0);
+                GlobalVars.behaviourSize = joptions.getInt(1);
+                GlobalVars.probMix = joptions.getInt(2);
+                GlobalVars.probMutation = joptions.getInt(3);
+                GlobalVars.wavesTillCross = joptions.getInt(4);
+                //System.out.println();
+            }
+        } 
+        catch (Exception ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadPlayer()
+    {
+        //JSONParser parser = new JSONParser();
+        try {
+            /*
+            FileReader file = new FileReader(GlobalVars.plFile);
+            JSONObject obj = (JSONObject) parser.parse(file);
+            */
+            File file = new File(GlobalVars.plFile);
+            String content = FileUtils.readFileToString(file, "utf-8");
+            if(!content.isEmpty())
+            {
+                JSONObject obj = new JSONObject(content);
+
+                game.loadPlayer(obj.getInt("HP"));
+            }
+        } 
+        catch (Exception ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void Load()
+    {
+        loadOptions();  //załaduj do GlobalVars
+        loadEnemies();  //załaduj do enemyHdlr? czy crMan?
+        loadPlayer();   //zapisz hp
+    }
+}

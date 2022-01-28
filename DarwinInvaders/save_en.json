@@ -1,0 +1,1 @@
+{"Enemies":[{"Behaviour":[0,2,1,2,0],"Parents":[-1,-1],"ID":0},{"Behaviour":[0,0,1,0,0],"Parents":[-1,-1],"ID":1},{"Behaviour":[0,0,1,0,0],"Parents":[-1,-1],"ID":2},{"Behaviour":[1,0,1,0,0],"Parents":[-1,-1],"ID":3},{"Behaviour":[0,2,1,2,0],"Parents":[-1,-1],"ID":4},{"Behaviour":[0,0,1,0,2],"Parents":[-1,-1],"ID":5},{"Behaviour":[0,1,0,2,0],"Parents":[-1,-1],"ID":6}]}
