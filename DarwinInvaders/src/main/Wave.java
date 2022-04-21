@@ -28,7 +28,7 @@ public class Wave {
         int n = GlobalVars.enemyCount;
         for(int i=0; i<n; i++)
         {
-            EntryPoints.add((rand.nextInt(8)*GlobalVars.gameWidth)/8);
+            EntryPoints.add((rand.nextInt(GlobalVars.enemyEntryPointNo)*GlobalVars.gameWidth)/GlobalVars.enemyEntryPointNo);
         }
     }
     

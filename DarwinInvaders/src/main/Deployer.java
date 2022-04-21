@@ -183,16 +183,16 @@ public class Deployer {
                     a = na;
                     b.clear();
                     b = nb;
-                    tmpPop.add(new Wave(a));
-                    tmpVal.add(waves.get(x1).getValue());
-                    tmpPop.add(new Wave(b));
-                    tmpVal.add(waves.get(x2).getValue());
-                    //dodaj do tab. tymczasowej, usuń z populacji, zmniejsz zakres
-                    waves.remove(x1);
-                    if(x1<x2) x2--;	//korekta, bo drugą wartość usuwamy z pomniejszonej tablicy
-                    waves.remove(x2);
-                    n -= 2;
-            }
+                }
+                tmpPop.add(new Wave(a));
+                tmpVal.add(waves.get(x1).getValue());
+                tmpPop.add(new Wave(b));
+                tmpVal.add(waves.get(x2).getValue());
+                //dodaj do tab. tymczasowej, usuń z populacji, zmniejsz zakres
+                waves.remove(x1);
+                if(x1<x2) x2--;	//korekta, bo drugą wartość usuwamy z pomniejszonej tablicy
+                waves.remove(x2);
+                n -= 2;
             }
         }
         //System.out.println("Przepisywanie listy");

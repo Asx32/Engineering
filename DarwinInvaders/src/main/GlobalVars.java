@@ -55,6 +55,8 @@ public class GlobalVars {
     public static int enemyCount = 7;
     //aktualny identyfikator
     public static int enemyIdCounter = 0;
+    //liczba punktów wejściowych
+    public static int enemyEntryPointNo = 4;
     
     //do algorytmu gen.
     public static int behaviourSize = 5;

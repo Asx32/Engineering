@@ -248,8 +248,6 @@ public class CrossingManager {
                 //losuj czy krzyżują
                 if((rand.nextInt(100)+1)<=GlobalVars.probMix)   //co to znaczy dla identyfikatorów?
                 {
-                    //znacznik pozycji
-                    int pos =0;
                     //miejsce cięcia
                     int cut = rand.nextInt(GlobalVars.behaviourSize-1)+1;
                     //listy tymczasowe
@@ -275,10 +273,6 @@ public class CrossingManager {
                     a = na;
                     b.clear();
                     b = nb;
-                    tmpPop.add(a);
-                    //tmpVal.add(values.get(x1));
-                    tmpPop.add(b);
-                    //tmpVal.add(values.get(x2));
                     //zapisz id rodziców
                     Integer[] tmpParents = new Integer[2];
                     tmpParents[0] = ids.get(x1);
@@ -288,18 +282,35 @@ public class CrossingManager {
                     tmpParents[0] = ids.get(x2);
                     tmpParents[1] = ids.get(x1);
                     tmpParentsList.add(tmpParents);
-                    //dodaj do tab. tymczasowej, usuń z populacji, zmniejsz zakres
-                    behaviours.remove(x1);
-                    values.remove(x1);
-                    ids.remove(x1);
-                    parents.remove(x1);
-                    if(x1<x2) x2--;	//korekta, bo drugą wartość usuwamy z pomniejszonej tablicy
-                    behaviours.remove(x2);
-                    values.remove(x2);
-                    ids.remove(x2);
-                    parents.remove(x2);
-                    n -= 2;
                 }
+                else
+                {
+                    //zapisz id rodziców
+                    Integer[] tmpParents = new Integer[2];
+                    tmpParents[0] = ids.get(x1);
+                    tmpParents[1] = ids.get(x1);
+                    tmpParentsList.add(tmpParents);
+                    tmpParents = new Integer[2];
+                    tmpParents[0] = ids.get(x2);
+                    tmpParents[1] = ids.get(x2);
+                    tmpParentsList.add(tmpParents);
+                }
+                tmpPop.add(a);
+                //tmpVal.add(values.get(x1));
+                tmpPop.add(b);
+                //tmpVal.add(values.get(x2));
+                
+                //dodaj do tab. tymczasowej, usuń z populacji, zmniejsz zakres
+                behaviours.remove(x1);
+                values.remove(x1);
+                ids.remove(x1);
+                parents.remove(x1);
+                if(x1<x2) x2--;	//korekta, bo drugą wartość usuwamy z pomniejszonej tablicy
+                behaviours.remove(x2);
+                values.remove(x2);
+                ids.remove(x2);
+                parents.remove(x2);
+                n -= 2;
             }
         }
         //przepisz nowe osobniki z powrotem do populacji

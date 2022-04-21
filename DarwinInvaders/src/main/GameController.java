@@ -134,7 +134,7 @@ public class GameController extends Canvas implements Runnable {
         double ns = 1000000000 / amountOfTicks;
         double delta = 0;
         long timer = System.currentTimeMillis();
-        int frames = 0;
+        //int frames = 0;
         while(running)
         {
             long now = System.nanoTime();
@@ -147,13 +147,13 @@ public class GameController extends Canvas implements Runnable {
             }
             if(running)
                 render();
-            frames++;
+            //frames++;
             
             if(System.currentTimeMillis() - timer >1000)
             {
                 timer +=1000;
                 //System.out.println("FPS: " +frames);
-                frames = 0;
+                //frames = 0;
             }
         }
         stop();
@@ -184,6 +184,7 @@ public class GameController extends Canvas implements Runnable {
             
             hud.updateHP(player);
             hud.setScore(0);
+            endScr = new EndScreen(this, hud);
             
             displayer.Reset();
         }
