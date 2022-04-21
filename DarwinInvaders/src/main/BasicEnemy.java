@@ -142,23 +142,21 @@ public class BasicEnemy extends GameObject {
             if(behaviourStep >= GlobalVars.behaviourSize) behaviourStep = 0;
             int move = behaviour.get(behaviourStep);
             model = sprite.getImage(move);
-            if(move == 0)
-            {
-                this.speedX = GlobalVars.enemySpeed;
-                this.speedY = 0;
-            }
-            else
-                if(move == 1)
-                {
+            switch (move) {
+                case 0:
+                    this.speedX = GlobalVars.enemySpeed;
+                    this.speedY = 0;
+                    break;
+                case 1:
                     this.speedX = -GlobalVars.enemySpeed;
                     this.speedY = 0;
-                }
-                else
-                    {
-                        this.speedY = GlobalVars.enemySpeed;
-                        this.speedX = 0;
-                        value += 10;    //Zwiększaj wartość tylko podczas ruchu w pionie
-                    }
+                    break;
+                default:
+                    this.speedY = GlobalVars.enemySpeed;
+                    this.speedX = 0;
+                    value += 10;
+                    break;
+            }
         }
         //ruch - ogranicz w poziomie; jeśli dotrze do dołu ekranu - ...
         x += speedX;

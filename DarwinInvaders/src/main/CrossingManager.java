@@ -17,11 +17,9 @@ public class CrossingManager {
     private LinkedList<Integer> values;
     private LinkedList<Integer> ids;
     private LinkedList<Integer[]> parents;
-    //parents   -jak to zrobić?
     
     public CrossingManager()
     {
-        //System.out.println("Tworzę obsługę krzyżowania");
         behaviours = new LinkedList<LinkedList<Integer>>();
         values = new LinkedList<Integer>();
         ids = new LinkedList<Integer>();
@@ -30,7 +28,6 @@ public class CrossingManager {
         Random r = new Random();
         for(int i=0; i<GlobalVars.enemyCount; i++)
         {
-            //System.out.println("Zachowanie " +i);
             behaviours.add(new LinkedList<Integer>());
             values.add(10);
             ids.add(-1);
@@ -43,10 +40,7 @@ public class CrossingManager {
             {
                 int m = r.nextInt(3);
                 behaviours.get(i).add(m);
-                //System.out.print(" "+m);
             }
-            //System.out.println();
-            //System.out.println("Pozycji: " + behaviours.get(i).size());
         }
     }
     
@@ -57,8 +51,6 @@ public class CrossingManager {
      */
     public void collectSpecimens(ObjHandler handler)
     {
-        //System.out.println("Pobieram osobniki");
-        //int s = 0;
         int n = handler.getSize();
         for(int i=0; i<n; i++)
         {
@@ -74,10 +66,8 @@ public class CrossingManager {
                 tmpInt[0] = tmpint[0];
                 tmpInt[1] = tmpint[1];
                 parents.add(tmpInt);
-                //s++;
             }
         }
-        //if(s>0) System.out.println("Pobrano " +s+ " osobników");
     }
     
     public void loadSpecimens(LinkedList<LinkedList<Integer>> lBehaviours, LinkedList<Integer> lIds, LinkedList<Integer[]> lParents)
@@ -194,8 +184,8 @@ public class CrossingManager {
             //przeglądaj kolejne elementy do momentu wyboru lub do końca tablicy
             while((pick<0)&&(j<n))
             {
-                    if(chances[j]>=attempt) pick = j;
-                    j++;
+                if(chances[j]>=attempt) pick = j;
+                j++;
             }
             //jeśli nie dokonano wyboru - przypisz ostatni element
             //Może zajść, jeśli dystrybuanta nie zsumuje się do 1.0
@@ -246,7 +236,7 @@ public class CrossingManager {
                 LinkedList<Integer> b = behaviours.get(x2);
                 
                 //losuj czy krzyżują
-                if((rand.nextInt(100)+1)<=GlobalVars.probMix)   //co to znaczy dla identyfikatorów?
+                if((rand.nextInt(100)+1)<=GlobalVars.probMix)
                 {
                     //miejsce cięcia
                     int cut = rand.nextInt(GlobalVars.behaviourSize-1)+1;
