@@ -362,7 +362,7 @@ public class GameController extends Canvas implements Runnable {
                 crMan.collectSpecimens(enemyHdlr);
                 displayer.SaveTheDead();
             }
-            enemyHdlr.clearDead(); //najpierw dodaj do krzyżowania!
+            enemyHdlr.clearDead();
             enemyProjectileHdlr.clearDead();
             playerProjectileHdlr.clearDead();        
             //tu: obsługa śmierci "gracza"
